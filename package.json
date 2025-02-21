@@ -1,0 +1,80 @@
+{
+  "name": "docfiller",
+  "version": "1.4.4",
+  "description": "Automated Google Forms filling web extension using GenAI. Making boring form filling easy!",
+  "homepage": "https://github.com/rootCircle/docFiller",
+  "keywords": [
+    "extension",
+    "google form",
+    "webpack",
+    "web-ext",
+    "automation",
+    "gpt"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rootCircle/docFiller.git"
+  },
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/rootCircle/docFiller/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "scripts": {
+    "watch": "bun tools/watcher.ts",
+    "build:firefox": "BROWSER=firefox bun tools/bundler.ts",
+    "build:chromium": "BROWSER=chromium bun tools/bundler.ts",
+    "package:firefox": "BROWSER=firefox bun tools/bundler.ts && web-ext build --source-dir=build --overwrite-dest && BROWSER=firefox bun run tools/packageRename.ts",
+    "package:chromium": "BROWSER=chromium bun tools/bundler.ts && web-ext build --source-dir=build --overwrite-dest && BROWSER=chromium bun run tools/packageRename.ts",
+    "dev:firefox": "cross-env BROWSER=firefox bun tools/bundler.ts && concurrently --kill-others \"cross-env BROWSER=firefox bun tools/watcher.ts\" \"web-ext run --source-dir=build\"",
+    "dev:chromium": "cross-env BROWSER=chromium bun tools/bundler.ts && concurrently --kill-others \"cross-env BROWSER=chromium bun tools/watcher.ts\" \"web-ext run -t chromium --source-dir=build\"",
+    "dev:firefox-android": "cross-env BROWSER=firefox bun tools/bundler.ts && concurrently --kill-others \"cross-env BROWSER=firefox bun tools/watcher.ts\" \"web-ext run -t firefox-android --source-dir=build\"",
+    "format": "biome format --write && prettier --write '**/*.{json,md,html,css}' '!build/**' '!node_modules/**' '!web-ext-artifacts/**'",
+    "format:check": "biome format && prettier --check '**/*.{json,md,html,css}' '!build/**' '!node_modules/**' '!web-ext-artifacts/**'",
+    "webext:lint": "web-ext lint --source-dir=build",
+    "lint": "biome lint",
+    "lint:fix": "biome lint --write",
+    "typecheck": "tsc --noEmit",
+    "spell": "cspell \"**/*.{ts,js,md,json,txt,html,css}\" \"Makefile\" --gitignore --cache",
+    "precommit": "bun run lint && bun run format:check && bun run typecheck && bun run spell && bun run build:firefox && web-ext lint --source-dir=build && bun run build:chromium",
+    "prepare": "husky"
+  },
+  "type": "module",
+  "dependencies": {
+    "@langchain/anthropic": "^0.3.12",
+    "@langchain/community": "^0.3.27",
+    "@langchain/google-genai": "^0.1.6",
+    "@langchain/mistralai": "^0.2.0",
+    "@langchain/ollama": "^0.1.5",
+    "@langchain/openai": "^0.4.2",
+    "langchain": "^0.3.13",
+    "uuid": "^11.0.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "optionalDependencies": {
+    "@esbuild/linux-x64": "^0.24.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/chrome": "^0.0.299",
+    "@types/firefox-webext-browser": "^120.0.4",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.12.0",
+    "@types/webextension-polyfill": "^0.12.1",
+    "chokidar": "^4.0.3",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "cspell": "^8.17.2",
+    "esbuild": "^0.24.2",
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.4.2",
+    "web-ext": "^8.3.0",
+    "webextension-polyfill": "^0.12.0"
+  }
+}
